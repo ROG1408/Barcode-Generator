@@ -1,303 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Barcode Generator — black on #8d8d8d</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Barcode Generator</title>
 
-  <!-- ✅ PWA manifest + theme color -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f0f10">
 
-  <!-- JsBarcode CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e1f22">
 
-  <style>
-    :root {
-      --bg: #0f0f10;
-      --card: #16181a;
-      --text: #e6e9ef;
-      --muted: #9aa4b2;
-      --accent: #5cc8ff;
-      --panel: #8d8d8d;
-    }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: grid;
-      place-items: center;
-      min-height: 100vh;
-      padding: 24px;
-    }
-    .app {
-      width: 100%;
-      max-width: 820px;
-      background: var(--card);
-      border-radius: 14px;
-      padding: 20px;
-      border: 1px solid #232832;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
-    .row { display: grid; gap: 12px; }
-    label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 6px; }
-    input, select, button {
-      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #2a3242;
-      background: #0d1117; color: var(--text); outline: none; transition: border .2s ease;
-    }
-    input:focus, select:focus { border-color: var(--accent); }
-    button {
-      background: linear-gradient(180deg, #5cc8ff, #3aa0ff);
-      border: none; color: #07121f; font-weight: 600; cursor: pointer;
-    }
-    button:hover { filter: brightness(1.05); }
+<!-- iOS support -->
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    /* ✅ Download button styling */
-    #downloadBtn {
-      margin: 20px auto 0 auto;
-      display: none;
-      width: 60%;
-      font-size: 1.3rem;
-      padding: 14px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, #5cc8ff, #3aa0ff);
-      color: #07121f;
-      font-weight: 700;
-      cursor: pointer;
-      text-align: center;
-    }
 
-    .output {
-      margin-top: 18px;
-      background: var(--panel);
-      border: 1px dashed #2a3242;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      min-height: 260px;
-      padding: 20px;
-    }
-    @media print {
-      body { background: #ffffff; color: #000; }
-      .output { background: #8d8d8d !important; }
-      svg, canvas {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-      }
-    }
-    svg#barcode {
-      width: 100%;
-      height: auto;
-      shape-rendering: crispEdges;
-      image-rendering: pixelated;
-      background: #8d8d8d;
-    }
-    .footer { margin-top: 12px; font-size: 12px; color: var(--muted); }
-    .error { color: #ff5c8a; font-size: 13px; margin-top: 6px; }
-    .small { font-size: 12px; color: var(--muted); margin-top: 6px; }
-  </style>
+<style>
+  body {
+    background-color: #2b2d31;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .module {
+    background-color: #1e1f22;
+    padding: 30px 40px;
+    border-radius: 22px;
+    width: 480px;
+  }
+
+  label {
+    font-size: 1.05rem;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 14px;
+    border: 2px solid #522729;
+    border-radius: 6px;
+    background-color: #111214;
+    color: #fff;
+    font-size: 1rem;
+  }
+
+  input[type="checkbox"] {
+    transform: scale(1.25);
+    margin-right: 10px;
+    accent-color: #ff3b3b;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #ff3b3b;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  button:hover {
+    background-color: #d62828;
+  }
+
+  #downloadBtn {
+    display: none;
+    width: auto;
+    padding: 16px 22px;
+    margin: 20px auto 0 auto;
+    background-color: #ff3b3b;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  #barcodeCanvas {
+    display: block;
+    margin: 20px auto;
+    background-color: #8D8D8D;
+    border-radius: 6px;
+    width: 100%;          /* display width fixed */
+    max-width: 440px;     /* generous max display size */
+  }
+</style>
 </head>
 <body>
-  <div class="app">
-    <h2 style="margin:0 0 10px 0;">Barcode generator</h2>
-    <p class="small">Bars are forced to black (#000000); background is #8d8d8d. Works in SVG or Canvas.</p>
 
-    <!-- ✅ DATA (own line) -->
-    <div class="row" style="grid-template-columns: 1fr;">
-      <div>
-        <label for="input">Data</label>
-        <input id="input" type="text" placeholder="e.g., 123456789012 or any text" />
-        <div id="error" class="error" style="display:none;"></div>
-      </div>
-    </div>
+<div class="module">
 
-    <!-- ✅ FORMAT + RENDER (same line) -->
-    <div class="row" style="grid-template-columns: 1fr 1fr;">
-      <div>
-        <label for="format">Format</label>
-        <select id="format">
-          <option value="CODE128" selected>CODE128 (text/numbers)</option>
-          <option value="CODE39">CODE39 (text/numbers)</option>
-          <option value="EAN13">EAN-13 (12–13 digits)</option>
-        </select>
-      </div>
+  <label for="textInput">Text:</label>
+  <input id="textInput" type="text" autofocus />
 
-      <div>
-        <label for="render">Render</label>
-        <select id="render">
-          <option value="svg" selected>SVG</option>
-          <option value="canvas">Canvas</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- ✅ GENERATE BUTTON (own line) -->
-    <div class="row" style="grid-template-columns: 1fr;">
-      <div>
-        <label>&nbsp;</label>
-        <button id="generate">Generate</button>
-      </div>
-    </div>
-
-    <!-- ✅ HEIGHT + WIDTH + SHOW VALUE (same line) -->
-    <div class="row" style="grid-template-columns: 1fr 1fr 1fr;">
-      <div>
-        <label for="height">Height</label>
-        <input id="height" type="number" min="40" max="220" value="100" />
-      </div>
-
-      <div>
-        <label for="width">Bar width</label>
-        <input id="width" type="number" step="0.2" min="0.8" max="4" value="2" />
-      </div>
-
-      <div>
-        <label for="displayValue">Show value</label>
-        <select id="displayValue">
-          <option value="true" selected>Yes</option>
-          <option value="false">No</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="output">
-      <svg id="barcode"></svg>
-      <canvas id="barcodeCanvas" style="display:none;"></canvas>
-    </div>
-
-    <!-- ✅ DOWNLOAD BUTTON -->
-    <button id="downloadBtn">Download Barcode</button>
-
-    <div class="footer">
-      <span>Tips:</span>
-      <ul style="margin:6px 0 0 18px;">
-        <li><strong>CODE128:</strong> Best general choice; compact, supports any ASCII text.</li>
-        <li><strong>EAN-13:</strong> Requires 12 digits (check digit will be added) or 13 digits.</li>
-        <li><strong>CODE39:</strong> Simpler, but larger barcodes; supports A–Z, 0–9, and - . space $ / + %.</li>
-      </ul>
-    </div>
+  <div style="margin-top: -6px;">
+    <input type="checkbox" id="showText" checked>
+    <label for="showText">Include text below barcode</label>
   </div>
 
-  <script>
-    const elInput = document.getElementById('input');
-    const elFormat = document.getElementById('format');
-    const elRender = document.getElementById('render');
-    const elHeight = document.getElementById('height');
-    const elWidth = document.getElementById('width');
-    const elDisplayValue = document.getElementById('displayValue');
-    const elError = document.getElementById('error');
+  <div style="height: 14px;"></div>
 
-    const svgTarget = document.getElementById('barcode');
-    const canvasTarget = document.getElementById('barcodeCanvas');
-    const downloadBtn = document.getElementById('downloadBtn');
+  <label for="descInput">Description:</label>
+  <input id="descInput" type="text" placeholder="Optional description..." />
 
-    function validateInput(value, format) {
-      if (format === 'EAN13') {
-        const digitsOnly = value.replace(/\D+/g, '');
-        if (digitsOnly.length !== value.length) return 'EAN-13 accepts digits only.';
-        if (digitsOnly.length !== 12 && digitsOnly.length !== 13) {
-          return 'Enter 12 digits (check digit will be added) or 13 digits.';
-        }
-      }
-      return '';
-    }
+  <button id="generateBtn">Generate</button>
 
-    function paintCanvasBackground(ctx, w, h, color) {
-      ctx.save();
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, w, h);
-      ctx.restore();
-    }
+  <canvas id="barcodeCanvas"></canvas>
 
-    function generate() {
-      const value = elInput.value.trim();
-      const format = elFormat.value;
-      const render = elRender.value;
-      const height = parseInt(elHeight.value, 10) || 100;
-      const width = parseFloat(elWidth.value) || 2;
-      const displayValue = elDisplayValue.value === 'true';
+  <button id="downloadBtn">Download PNG</button>
 
-      const errorMsg = validateInput(value, format);
-      if (errorMsg) {
-        elError.textContent = errorMsg;
-        elError.style.display = 'block';
-        return;
-      } else {
-        elError.style.display = 'none';
-      }
+</div>
 
-      const options = {
-        format,
-        lineColor: "#000000",
-        background: "#8d8d8d",
-        width,
-        height,
-        displayValue,
-        margin: 12
-      };
+<script>
+/* --- CODE128 subset B encoder --- */
+const CODE128_PATTERNS = [
+  "11011001100","11001101100","11001100110","10010011000","10010001100","10001001100",
+  "10011001000","10011000100","10001100100","11001001000","11001000100","11000100100",
+  "10110011100","10011011100","10011001110","10111001100","10011101100","10011100110",
+  "11001110010","11001011100","11001001110","11011100100","11001110100","11101101110",
+  "11101001100","11100101100","11100100110","11101100100","11100110100","11100110010",
+  "11011011000","11011000110","11000110110","10100011000","10001011000","10001000110",
+  "10110001000","10001101000","10001100010","11010001000","11000101000","11000100010",
+  "10110111000","10110001110","10001101110","10111011000","10111000110","10001110110",
+  "11101110110","11010001110","11000101110","11011101000","11011100010","11011101110",
+  "11101011000","11101000110","11100010110","11101101000","11101100010","11100011010",
+  "11101111010","11001000010","11110001010","10100110000","10100001100","10010110000",
+  "10010000110","10000101100","10000100110","10110010000","10110000100","10011010000",
+  "10011000010","10000110100","10000110010","11000010010","11001010000","11110111010",
+  "11000010100","10001111010","10100111100","10010111100","10010011110","10111100100",
+  "10011110100","10011110010","11110100100","11110010100","11110010010","11011011110",
+  "11011110110","11110110110","10101111000","10100011110","10001011110","10111101000",
+  "10111100010","11110101000","11110100010","10111011110","10111101110","11101011110",
+  "11110101110","11010000100","11010010000","11010011100","11000111010"
+];
 
-      if (render === 'svg') {
-        svgTarget.style.display = 'block';
-        canvasTarget.style.display = 'none';
-        while (svgTarget.firstChild) svgTarget.removeChild(svgTarget.firstChild);
-        JsBarcode(svgTarget, value, options);
-        const rects = svgTarget.querySelectorAll('rect');
-        rects.forEach(r => {
-          r.setAttribute('fill', '#000000');
-          r.setAttribute('shape-rendering', 'crispEdges');
-        });
-        svgTarget.style.background = '#8d8d8d';
-      } else {
-        svgTarget.style.display = 'none';
-        canvasTarget.style.display = 'block';
-        const ctx = canvasTarget.getContext('2d');
-        const estimatedWidth = Math.max(320, Math.ceil(value.length * width * 12));
-        canvasTarget.width = estimatedWidth;
-        canvasTarget.height = height + (displayValue ? 40 : 20);
-        paintCanvasBackground(ctx, canvasTarget.width, canvasTarget.height, '#8d8d8d');
-        JsBarcode(canvasTarget, value, options);
-      }
+function encodeCode128(text) {
+  let codes = [104];
+  for (let char of text) {
+    let code = char.charCodeAt(0);
+    if (code < 32 || code > 126) continue;
+    codes.push(code - 32);
+  }
+  let checksum = 104;
+  for (let i = 1; i < codes.length; i++) checksum += codes[i] * i;
+  checksum %= 103;
+  codes.push(checksum);
+  codes.push(106);
+  return codes.map(c => CODE128_PATTERNS[c]).join("") + "11";
+}
 
-      downloadBtn.style.display = "block";
-    }
+function drawBarcode(text, description, showText) {
+  const canvas = document.getElementById("barcodeCanvas");
+  const ctx = canvas.getContext("2d");
 
-    document.getElementById('generate').addEventListener('click', generate);
-    elInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') generate(); });
+  /* ============================
+     SPACING VARIABLES
+     ============================ */
+  const DESC_SPACING_1 = 2;
+  const BLACK_DIVIDER_SIZE = 2;
+  const DESC_SPACING_2 = 10;
+  const TEXT_SPACING = 9;
 
-    /* ✅ Download logic */
-    downloadBtn.addEventListener("click", () => {
-      const render = elRender.value;
+  const VERT_MARGIN = 10;
+  const HORI_MARGIN = 30;
 
-      if (render === "svg") {
-        const serializer = new XMLSerializer();
-        const svgData = serializer.serializeToString(svgTarget);
-        const blob = new Blob([svgData], { type: "image/svg+xml" });
-        const url = URL.createObjectURL(blob);
+  /* ============================ */
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "barcode.svg";
-        a.click();
-        URL.revokeObjectURL(url);
-      } else {
-        canvasTarget.toBlob(blob => {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "barcode.png";
-          a.click();
-          URL.revokeObjectURL(url);
-        });
-      }
-    });
+  const pattern = encodeCode128(text);
 
-    /* ✅ Register service worker for PWA */
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
-  </script>
+  const barWidth = 2;
+  const barHeight = 100;
+
+  /* Full-resolution canvas width */
+  const fullWidth = pattern.length * barWidth + HORI_MARGIN * 2;
+
+  /* Display width cap (module width) */
+  const maxDisplayWidth = 440;
+
+  /* Scaling factor (only for display) */
+  const scale = Math.min(1, maxDisplayWidth / fullWidth);
+
+  /* Canvas internal size stays full resolution */
+  let height = VERT_MARGIN;
+
+  if (description) {
+    height += 30;
+    height += DESC_SPACING_1;
+    height += BLACK_DIVIDER_SIZE;
+    height += DESC_SPACING_2;
+  }
+
+  height += barHeight;
+
+  if (showText) {
+    height += TEXT_SPACING;
+    height += 30;
+  }
+
+  height += VERT_MARGIN;
+
+  canvas.width = fullWidth;
+  canvas.height = height;
+
+  ctx.fillStyle = "#8D8D8D";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  let y = VERT_MARGIN;
+
+  if (description) {
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#000000";
+    ctx.font = "20px Arial";
+    ctx.fillText(description, canvas.width / 2, y + 22);
+    y += 30 + DESC_SPACING_1;
+
+    ctx.fillRect(HORI_MARGIN, y, canvas.width - HORI_MARGIN * 2, BLACK_DIVIDER_SIZE);
+    y += BLACK_DIVIDER_SIZE + DESC_SPACING_2;
+  }
+
+  let x = HORI_MARGIN;
+  ctx.fillStyle = "#000000";
+  for (let bit of pattern) {
+    if (bit === "1") ctx.fillRect(x, y, barWidth, barHeight);
+    x += barWidth;
+  }
+
+  y += barHeight;
+
+  if (showText) {
+    y += TEXT_SPACING;
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#000000";
+    ctx.font = "22px Arial";
+    ctx.fillText(text, canvas.width / 2, y + 22);
+  }
+
+  /* Apply display scaling */
+  canvas.style.transform = `scale(${scale})`;
+  canvas.style.transformOrigin = "top center";
+}
+
+document.getElementById("generateBtn").addEventListener("click", () => {
+  const text = document.getElementById("textInput").value.trim();
+  const description = document.getElementById("descInput").value.trim();
+  const showText = document.getElementById("showText").checked;
+
+  if (text.length > 0) {
+    drawBarcode(text, description, showText);
+    document.getElementById("downloadBtn").style.display = "block";
+  }
+});
+
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  const canvas = document.getElementById("barcodeCanvas");
+  const link = document.createElement("a");
+  link.download = "barcode.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+});
+
+
+
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js")
+      .catch(err => console.log("SW registration failed:", err));
+  });
+}
+</script>
+
 </body>
 </html>

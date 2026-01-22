@@ -1,6 +1,6 @@
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open("barcodegen-v1").then(cache => {
+    caches.open("barcodegen-v2").then(cache => {
       return cache.addAll([
         "./",
         "./index.html",
@@ -19,3 +19,4 @@ self.addEventListener("fetch", event => {
     })
   );
 });
+
